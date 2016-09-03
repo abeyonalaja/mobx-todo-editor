@@ -1,5 +1,3 @@
-var path = require('path');
-
 module.exports = {
   // Don't try to find .babelrc because we want to force this configuration.
   babelrc: false,
@@ -10,12 +8,12 @@ module.exports = {
     require.resolve('babel-preset-react')
   ],
   plugins: [
+    // handles @decorator
+    require.resolve('babel-plugin-transform-decorators-legacy'),
     // class { handleClick = () => { } }
     require.resolve('babel-plugin-transform-class-properties'),
     // { ...todo, completed: true }
     require.resolve('babel-plugin-transform-object-rest-spread'),
-    // handles @decorator
-    require.resolve('babel-plugin-transform-decorators-legacy'),
     // function* () { yield 42; yield 43; }
     [require.resolve('babel-plugin-transform-regenerator'), {
       // Async functions are converted to generators by babel-preset-latest
@@ -25,16 +23,9 @@ module.exports = {
     [require.resolve('babel-plugin-transform-runtime'), {
       helpers: false,
       polyfill: false,
-      regenerator: true,
-      // Resolve the Babel runtime relative to the config.
-      // You can safely remove this after ejecting:
-      moduleName: path.dirname(require.resolve('babel-runtime/package'))
+      regenerator: true
     }],
     // Optimization: hoist JSX that never changes out of render()
-    // Disabled because of issues:
-    // * https://github.com/facebookincubator/create-react-app/issues/525
-    // * https://phabricator.babeljs.io/search/query/pCNlnC2xzwzx/
-    // TODO: Enable again when these issues are resolved.
-    // require.resolve('babel-plugin-transform-react-constant-elements')
-  ]
+    require.resolve('babel-plugin-transform-react-constant-elements')
+  ],
 };

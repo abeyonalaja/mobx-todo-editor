@@ -59,8 +59,15 @@ module.exports = {
     // These are the reasonable defaults supported by the Node ecosystem.
     extensions: ['.js', '.json', ''],
     alias: {
-      // Support React Native Web
-      // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
+      // This `alias` section can be safely removed after ejection.
+      // We do this because `babel-runtime` may be inside `react-scripts`,
+      // so when `babel-plugin-transform-runtime` imports it, it will not be
+      // available to the app directly. This is a temporary solution that lets
+      // us ship support for generators. However it is far from ideal, and
+      // if we don't have a good solution, we should just make `babel-runtime`
+      // a dependency in generated projects.
+      // See https://github.com/facebookincubator/create-react-app/issues/255
+      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator'),
       'react-native': 'react-native-web'
     }
   },
@@ -96,51 +103,36 @@ module.exports = {
       // in development "style" loader enables hot editing of CSS.
       {
         test: /\.css$/,
+        include: [paths.appSrc, paths.appNodeModules],
         loader: 'style!css!postcss'
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
       {
         test: /\.json$/,
+        include: [paths.appSrc, paths.appNodeModules],
         loader: 'json'
       },
       // "file" loader makes sure those assets get served by WebpackDevServer.
       // When you `import` an asset, you get its (virtual) filename.
       // In production, they would get copied to the `build` folder.
       {
-        test: /\.(ico|jpg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
-        exclude: /\/favicon.ico$/,
+        test: /\.(jpg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        include: [paths.appSrc, paths.appNodeModules],
         loader: 'file',
         query: {
           name: 'static/media/[name].[hash:8].[ext]'
-        }
-      },
-      // A special case for favicon.ico to place it into build root directory.
-      {
-        test: /\/favicon.ico$/,
-        include: [paths.appSrc],
-        loader: 'file',
-        query: {
-          name: 'favicon.ico?[hash:8]'
         }
       },
       // "url" loader works just like "file" loader but it also embeds
       // assets smaller than specified size as data URLs to avoid requests.
       {
         test: /\.(mp4|webm)(\?.*)?$/,
+        include: [paths.appSrc, paths.appNodeModules],
         loader: 'url',
         query: {
           limit: 10000,
           name: 'static/media/[name].[hash:8].[ext]'
-        }
-      },
-      // "html" loader is used to process template page (index.html) to resolve
-      // resources linked with <link href="./relative/path"> HTML tags.
-      {
-        test: /\.html$/,
-        loader: 'html',
-        query: {
-          attrs: ['link:href'],
         }
       }
     ]
@@ -168,10 +160,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
+      favicon: paths.appFavicon,
     }),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `env.js`.
     new webpack.DefinePlugin(env),
+    // Note: only CSS is currently hot reloaded
     // This is necessary to emit hot updates (currently CSS only):
     new webpack.HotModuleReplacementPlugin(),
     // Watcher doesn't work well if you mistype casing in a path so we use

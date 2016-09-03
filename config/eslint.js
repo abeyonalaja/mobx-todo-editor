@@ -12,14 +12,13 @@ module.exports = {
 
   parser: 'babel-eslint',
 
-  // import plugin is temporarily disabled, scroll below to see why
+  // import plugin is termporarily disabled, scroll below to see why
   plugins: [/*'import', */'flowtype', 'jsx-a11y', 'react'],
 
   env: {
     browser: true,
     commonjs: true,
     es6: true,
-    jest: true,
     node: true
   },
 
@@ -106,13 +105,13 @@ module.exports = {
       'LabeledStatement',
       'WithStatement',
     ],
+    'no-return-assign': 'warn',
     'no-script-url': 'warn',
     'no-self-assign': 'warn',
     'no-self-compare': 'warn',
     'no-sequences': 'warn',
     'no-shadow-restricted-names': 'warn',
     'no-sparse-arrays': 'warn',
-    'no-template-curly-in-string': 'warn',
     'no-this-before-super': 'warn',
     'no-throw-literal': 'warn',
     'no-undef': 'warn',
