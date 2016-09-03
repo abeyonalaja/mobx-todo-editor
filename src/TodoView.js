@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { observer } from 'mobx-react';
+import SingleTodoView from 'SingleTodoView';
 
 
 @observer
@@ -17,7 +18,7 @@ export class TodoView extends React.Component{
           <button onClick={ () => model.load() }> Reload Todos </button>
           <button onClick={ () => model.save() }> Save Todos </button>
         </p>
-        // { model.todos.map((todo, i) => ) }
+        { model.todos.map((todo, i) => ) <SingleTodoView key={ todo.id } model={ model } todo={ todo } /> }
       </div>
     );
   }
