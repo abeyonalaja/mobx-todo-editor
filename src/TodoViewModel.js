@@ -35,4 +35,25 @@ export class TodoViewModel{
     }
 
   }
+
+  // save todos, if possible
+  @action
+  save(){
+
+    // are there invalid todos?
+    if(this.todos.filter(todo => todo.isValid === false).length > 0 ){
+      alert("unable to save: there are invalid todo's");
+    }
+
+    if(window.localStorge){
+      window.localStorge.setItem(
+
+        "todos",
+        JSON.stringify(
+          this.todos.map(todo => todo.serialize())
+        )
+      )
+    }
+
+  }
 }
